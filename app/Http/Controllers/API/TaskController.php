@@ -76,8 +76,6 @@ class TaskController extends Controller
             return response()->json(['message' => 'Task not found'], 404);
         }
 
-        if()
-
         $this->taskService->updateTaskStatus($task, $request->validated());
 
         return response()->json(['message' => 'Task status updated'], 200);
