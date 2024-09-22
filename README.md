@@ -12,10 +12,12 @@ A simple task management app created using Laravel Sail.
 2. Setup the project using Docker Sail:
    ```bash
    ./vendor/bin/sail up -d
-3. Install Vite and Tailwind dependencies using npm or yarn:
+3. Setup node dependencies using npm or yarn:
     ```bash
-   ./vendor/bin/sail up -d
-4. Run the development server:
+    npm i
+    # or
+    yarn
+4. Run the vite development server:
     ```bash
     npm run dev
     # or
