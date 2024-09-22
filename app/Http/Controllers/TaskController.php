@@ -7,6 +7,8 @@ use App\Models\TaskCategory;
 use App\Models\TaskStatuses;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
+use App\Http\Requests\TaskRequest;
+use App\Http\Requests\TaskUpdateStatusRequest;
 
 class TaskController extends Controller
 {
@@ -19,10 +21,8 @@ class TaskController extends Controller
 
     public function dashboard()
     {
-        // Get task counts by status
         $tasksPerStatus = TaskStatuses::withCount('tasks')->get();
 
-        // Get task counts by category
         $tasksPerCategory = TaskCategory::withCount('tasks')->get();
 
         return view('dashboard', compact('tasksPerStatus', 'tasksPerCategory'));
@@ -31,17 +31,14 @@ class TaskController extends Controller
     
     public function list()
     {
-        // Fetch tasks with pagination, 10 per page
-        $tasks = Tasks::paginate(10);
+        $statuses = TaskStatuses::with('tasks')->get();
 
-        // Return view with paginated tasks
-        return view('tasks.index', compact('tasks'));
+        return view('tasks.index', compact('statuses'));
     }
 
     
     public function create()
     {
-        // Fetch categories and statuses for dropdowns
         $categories = TaskCategory::all();
         $statuses = TaskStatuses::all();
 
@@ -49,16 +46,9 @@ class TaskController extends Controller
     }
 
     
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $data = $request->validate([
-            'task_name' => 'required|string|max:255',
-            'task_description' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:task_category,id',
-            'status_id' => 'sometimes|exists:task_statuses,id',
-        ]);
-
-        $this->taskService->createTask($data);
+        $this->taskService->createTask($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
     }
@@ -73,18 +63,18 @@ class TaskController extends Controller
     }
 
     
-    public function update(Request $request, Tasks $task)
+    public function update(TaskRequest $request, Tasks $task)
     {
-        $data = $request->validate([
-            'task_name' => 'required|string|max:255',
-            'task_description' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:task_category,id',
-            'status_id' => 'sometimes|exists:task_statuses,id',
-        ]);
-
-        $this->taskService->updateTask($task, $data);
+        $this->taskService->updateTask($task, $request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+    }
+
+    public function updateStatus(TaskUpdateStatusRequest $request, Tasks $task)
+    {
+        $this->taskService->updateTaskStatus($task, $request->validated());
+
+        return redirect()->back()->with('success', 'Task status updated successfully!');
     }
 
     

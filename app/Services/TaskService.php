@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Tasks;
-
 use App\Models\MemberTasks;
 
 class TaskService
@@ -17,25 +16,26 @@ class TaskService
     
     public function updateTask(Tasks $task, array $data): Tasks
     {
-        // var_dump($data);
-        if((int)$data['status_id'] == 4) {
-          $data['completion_date'] = date('Y-m-d H:i:s');
-        }
         $task->update($data);
         return $task;
     }
 
+    public function updateTaskStatus(Tasks $task, array $data): Tasks
+    {
+        $completion_date = null;
+        if((int)$data['status_id'] == 4) {
+          $completion_date = date('Y-m-d H:i:s');
+        }
+        
+        $task->update([
+            'status_id' => $data['status_id'],
+            'completion_date' => $completion_date,
+        ]);
+        return $task;
+    }
     
     public function deleteTask(Tasks $task): void
     {
         $task->delete();
-    }
-
-    public function setMemberTask(array $data): MemberTasks 
-    {
-        return MemberTask::create([
-          'task_id' => $data['task_id'], 
-          'member_id' => $data['member_id']
-        ]);
     }
 }

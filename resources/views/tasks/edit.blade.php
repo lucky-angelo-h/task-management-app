@@ -42,21 +42,6 @@
               </select>
           </div>
 
-          <!-- Status Dropdown -->
-          <div class="mb-4">
-              <label for="status_id" class="block text-gray-700">Status</label>
-              <select name="status_id" id="status_id" class="border rounded w-full py-2 px-3 text-gray-700">
-                  @foreach($statuses as $status)
-                      <option value="{{ $status->id }}" 
-                      {{ $status->id == old('status_id', $task->status_id) ? 'selected' : '' }}
-                      {{ $task->status_id != 1 && $status->id == 1? 'disabled' : '' }}
-                      {{ $task->status_id == 4 && $status->id != 4? 'disabled' : '' }}
-                      >
-                          {{ $status->status_name }}
-                      </option>
-                  @endforeach
-              </select>
-          </div>
 
           <!-- Submit Button -->
           <div class="flex items-center justify-between">
